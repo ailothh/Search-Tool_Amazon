@@ -2,6 +2,7 @@ import sqlite3
 import json
 from http import HTTPStatus
 import os
+
 def handler(request):
     # Get user input from the query parameters
     first_name = request.args.get('first_name')
@@ -17,17 +18,14 @@ def handler(request):
     # Combine first and last name to form the display name (case-insensitive)
     display_name = f"{first_name} {last_name}".lower()
 
-    # Connect to SQLite database and search for the user
     try:
+        # Use a relative path for the .db file
         db_path = os.path.join(os.path.dirname(__file__), 'amazon_employeees.db')
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        # Query the database using the display name
         query = "SELECT * FROM amazon WHERE LOWER(display_name) = ?;"
         cursor.execute(query, (display_name,))
-
-        # Fetch the result
         result = cursor.fetchone()
 
         if result:
